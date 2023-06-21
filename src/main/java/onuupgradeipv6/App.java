@@ -89,8 +89,8 @@ public class App {
             					if(updateStatus(ip, page) == false)//si la onu no esta actualizada la manda a actualizar
             					{
             						onuCount++;
-            						cronometro(180);
-            						upgrated(ip, page);
+            						 cronometro(180);
+            						 upgrated(ip, page);
 			                         login(ip, page, user, pass);
 			                         updateStatus(ip, page);
 			                         logout(ip, page);
@@ -142,13 +142,10 @@ public class App {
             				
             				page2.close();
             			}
-            		
 
-               
 //                context.close();
 //                page.close();
 //                browser.close();
-
 
             // Restaura la salida estándar
 //            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
