@@ -67,7 +67,6 @@ public class App {
             Boolean onuCorrecta = false;
             Boolean onuCorrectav2 = false;
             int onuCount = 0;
-            int totalonu = 0;
             for(int i = 0; 2 <= 252; i++)
             {
 
@@ -133,7 +132,7 @@ public class App {
             						
             						if(updateStatus(ip, page2) == false)//si la onu no esta actualizada la manda a actualizar
             						{
-	        							onuCount++;
+            							onuCount++;
 	        							upgrated(ip, page2);
 	        							
 //	            						 Page newPage2 = context.waitForPage(() -> {
@@ -169,7 +168,7 @@ public class App {
 //            logStream.close();
             		
             		
-            		System.out.println("Onus Encontradas:" + totalonu);
+            		System.out.println("Onus Encontradas:" + onuCount);
             } //End For
     
             
