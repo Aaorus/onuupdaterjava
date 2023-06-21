@@ -80,7 +80,7 @@ public class App {
             			onuCorrecta = onuv1(ip, page);
             			if (onuCorrecta)
             			{
-            				page.setDefaultTimeout(10000);
+            				page.setDefaultTimeout(20000);
             				System.out.println("- ONU v1.5 Detectada");
             				
             				if(login(ip, page, user, pass) == true)
@@ -125,7 +125,7 @@ public class App {
             				
             				if(onuCorrectav2)
             				{
-            					page2.setDefaultTimeout(10000);
+            					page2.setDefaultTimeout(20000);
             					System.out.println("- ONU v1.5 Detectada");
             					if(loginv2(ip, page2, user, pass) == true)
             					{
@@ -356,8 +356,9 @@ public class App {
         
         System.out.println("");
         	
-            } catch (Exception e) {
-                System.out.println("- No se pudo enviar al binario.tar");
+            } catch (com.microsoft.playwright.TimeoutError e) {
+            	
+                System.out.println("- No se pudo enviar al binario.tar, tiempo de espera superado " + e);
             }
     
 
