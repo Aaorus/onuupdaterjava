@@ -54,6 +54,8 @@ public class App {
             Playwright playwright = Playwright.create();
             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(showBrowser).setChannel("chrome"));
             BrowserContext context = browser.newContext(new Browser.NewContextOptions().setIgnoreHTTPSErrors(true).setJavaScriptEnabled(true));
+//            Page page = context.newPage();
+//            page.onDialog(dialog -> dialog.accept());
             // Page page = browser.newPage(new Browser.NewPageOptions().setIgnoreHTTPSErrors(true));
             // permite que los dialog no se cierren automaticos y los acepta
             // PLAYWRIGHT END
@@ -64,84 +66,85 @@ public class App {
 
             Boolean onuCorrecta = false;
             Boolean onuCorrectav2 = false;
-            int paginas = 0;
+            int onuCount = 0;
+            int totalonu = 0;
             for(int i = 0; 2 <= 252; i++)
             {
-            	if (paginas >= 10)
-            	{
-            		cronometro(180);
-            		browser.close();
-            		paginas = 0;
-            	}else
-            	{
-                    Page page = context.newPage();
-                    page.onDialog(dialog -> dialog.accept());
-            		// ip = "192.168.1.1";
-            		ip = bloque.get(i);
-            		System.out.println("- Intendando conexion con: " + ip.toString());
-            		page.setDefaultTimeout(4000);
-            		onuCorrecta = onuv1(ip, page);
-            		if (onuCorrecta)
-            		{
-            			page.setDefaultTimeout(30000);
-            			System.out.println("- ONU v1.5 Detectada");
 
-            			if(login(ip, page, user, pass) == true)
+            			ip = bloque.get(i);
+            			System.out.println("- Intendando conexion con: " + ip.toString());
+            			
+                        Page page = context.newPage();
+                        page.onDialog(dialog -> dialog.accept());
+            			
+            			page.setDefaultTimeout(4000);
+            			onuCorrecta = onuv1(ip, page);
+            			if (onuCorrecta)
             			{
-            				paginas++;
-            				if(updateStatus(ip, page) == false)//si la onu no esta actualizada la manda a actualizar
-            				{
-	                         upgrated(ip, page);
-//	                         login(ip, page, user, pass);
-//	                         updateStatus(ip, page);
-//	                         logout(ip, page);
-
-            				}else{
-            					System.out.println("Systema ya actualizado");
-            				}
-            			}else{
-            				System.out.println("- Equipo dejo de responder....");
-            			}
-            			
-            			
-            		}else{ /// METODO LOGIN 2
-            			
-            			System.out.println("- Login Metodo v2");
-            			
-                        Page page2 = context.newPage();
-                        page2.onDialog(dialog -> dialog.accept());
-            			
-            			page2.setDefaultTimeout(4000);
-            			onuCorrectav2 = onuv2(ip, page2);
-            			
-            			if(onuCorrectav2)
-            			{
-            				paginas++;
-            				page2.setDefaultTimeout(30000);
+            				page.setDefaultTimeout(30000);
             				System.out.println("- ONU v1.5 Detectada");
-            				if(loginv2(ip, page2, user, pass) == true)
+            				
+            				if(login(ip, page, user, pass) == true)
             				{
-            					
-            					paginas++;
-            					if(updateStatus(ip, page2) == false)//si la onu no esta actualizada la manda a actualizar
+            					if(updateStatus(ip, page) == false)//si la onu no esta actualizada la manda a actualizar
             					{
-		                            upgrated(ip, page2);
-//		                            loginv2(ip, page, user, pass);
-//		                            updateStatus(ip, page);
-//		                            logout(ip, page);
+            						onuCount++;
+            						cronometro(180);
+            						upgrated(ip, page);
+			                         login(ip, page, user, pass);
+			                         updateStatus(ip, page);
+			                         logout(ip, page);
+			                         page.setDefaultTimeout(3000);
+            						page.close();
             					}else{
             						System.out.println("Systema ya actualizado");
             					}
             				}else{
             					System.out.println("- Equipo dejo de responder....");
             				}
+            			page.close();
+            				
+            				
+            			}else{ /// METODO LOGIN 2
+            				
+            				System.out.println("- Login Metodo v2");
+            				
+            	            Page page2 = context.newPage();
+            	            page2.onDialog(dialog -> dialog.accept());
+
+            				
+            				page2.setDefaultTimeout(4000);
+            				onuCorrectav2 = onuv2(ip, page2);
+            				
+            				if(onuCorrectav2)
+            				{
+            					page2.setDefaultTimeout(30000);
+            					System.out.println("- ONU v1.5 Detectada");
+            					if(loginv2(ip, page2, user, pass) == true)
+            					{
+            						
+            						if(updateStatus(ip, page2) == false)//si la onu no esta actualizada la manda a actualizar
+            						{
+	        							onuCount++;
+	        							upgrated(ip, page);
+			                            loginv2(ip, page, user, pass);
+			                            updateStatus(ip, page);
+			                            logout(ip, page);
+			                            page.setDefaultTimeout(3000);
+            							page2.close();
+            						}else{
+            							System.out.println("Systema ya actualizado");
+            						}
+            					}else{
+            						System.out.println("- Equipo dejo de responder....");
+            					}
+            				}// end if v2
+            				
+            				page2.close();
             			}
-            		}
             		
-            		
-            	}// if end
-                
-                
+
+               
 //                context.close();
 //                page.close();
 //                browser.close();
@@ -151,15 +154,19 @@ public class App {
 //            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
 
             // Cierra el archivo de registro
-            logStream.close();
-            }
+//            logStream.close();
+            		
+            		
+            		System.out.println("Onus Encontradas:" + totalonu);
+            } //End For
     
-            //end system
-
+            
         } catch (Exception e) {
-            System.out.println("Para mas informacion revisar el archivo .log");
+//            System.out.println("Para mas informacion revisar el archivo .log");
         }  
-
+        
+        
+        System.out.println("Scann Finalizado ");
 	}//END MAIN
 	
 	public static Boolean onuv1(String ip, Page page)
@@ -178,12 +185,15 @@ public class App {
             if( name != null && pass != null && code != null && verify != null)
             {
                 onuv1 = true;
+            }else {
+            	page.close();
             }
             
 
         } catch (Exception e) {
            System.out.println("- No se logro establecer la conexion");
            onuv1 = false;
+           page.close();
         }
 
         return onuv1;
@@ -203,10 +213,15 @@ public class App {
             if( name != null && pass != null)
             {
                 onuv2 = true ;
+            }else
+            {
+            	page.close();
             }
             
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println("- No se logro establecer la conexion");
+            onuv2 = false;
+        	page.close();
         }
 
         return onuv2;
@@ -227,10 +242,13 @@ public class App {
             if( name != null && pass != null && code != null && verify != null)
             {
               onuv3 = true;
+            }else
+            {
+            	page.close();
             }
             
         } catch (Exception e) {
-            // TODO: handle exception
+        	page.close();
         }
 
         return onuv3;
@@ -313,7 +331,7 @@ public class App {
         fileChooser.setFiles(Paths.get("C:\\FW_UPDATE\\V2802RGWT_COMPU_V1.9.1.6-230530_S10407.tar"));
         page.locator("[name=send]").click();
 
-       // cronometro(180); //180segundo = 3 minutos
+//        cronometro(180); //180segundo = 3 minutos
         System.out.println("");
         
             } catch (Exception e) {
@@ -401,7 +419,7 @@ public class App {
         for(double i = 1; i < tiempo; i++)
         {
             // limpiarConsola(); 
-            porcentaje = (i / tiempo) * 100;
+            porcentaje = (i / tiempo) * 100; //tiempo en segundos
             System.out.print(df.format(porcentaje)+ "% ");
             dormir(1000);
             return porcentaje;
