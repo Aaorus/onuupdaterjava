@@ -85,9 +85,9 @@ public class App {
             				
             				if(login(ip, page, user, pass) == true)
             				{
+            					onuCount++;
             					if(updateStatus(ip, page) == false)//si la onu no esta actualizada la manda a actualizar
             					{
-            						onuCount++;
             						 upgrated(ip, page);
             						 
 //            						 Page newPage = context.waitForPage(() -> {
@@ -129,10 +129,10 @@ public class App {
             					System.out.println("- ONU v1.5 Detectada");
             					if(loginv2(ip, page2, user, pass) == true)
             					{
+            						onuCount++;
             						
             						if(updateStatus(ip, page2) == false)//si la onu no esta actualizada la manda a actualizar
             						{
-            							onuCount++;
 	        							upgrated(ip, page2);
 	        							
 //	            						 Page newPage2 = context.waitForPage(() -> {
